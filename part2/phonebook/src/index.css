@@ -1,0 +1,12 @@
+.alert-box {
+  background-color: lightgray;
+  width: 100%;
+  border-radius: 5px;
+  border: solid 3px green;
+  color: green;
+}
+
+.error {
+  color: red;
+  border-color: red;
+}

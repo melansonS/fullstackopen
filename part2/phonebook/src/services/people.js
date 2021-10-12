@@ -21,4 +21,6 @@ const deletePerson = (id) => {
   return request.then((response) => response.data);
 };
 
-export default { getAll, createPerson, updatePerson, deletePerson };
+const exports = { getAll, createPerson, updatePerson, deletePerson };
+
+export default exports;

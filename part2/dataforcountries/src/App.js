@@ -14,7 +14,7 @@ function App() {
         country.name.common.toLowerCase().includes(searchValue.toLowerCase())
       )
     );
-  }, [searchValue, setCountriesToShow]);
+  }, [searchValue, setCountriesToShow, countries]);
   useEffect(() => {
     axios
       .get("https://restcountries.com/v3.1/all")

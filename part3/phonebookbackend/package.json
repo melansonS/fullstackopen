@@ -6,13 +6,16 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui" : "rm -rf /build && cd ../phonebook && npm run build && cp build -r ../phonebookbackend"
+    "build:ui": "rm -rf /build && cd ../phonebook && npm run build && cp build -r ../phonebookbackend",
+    "checkDB": "node ../commandlinedatabase/mongo.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "mongoose": "^6.0.10",
     "morgan": "^1.10.0"
   }
 }

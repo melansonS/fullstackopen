@@ -5,7 +5,7 @@ POST http://localhost:3005/api/blogs
 content-type: application/json
 
 {
-  "author": "Jimmy Fallon",
-  "title": "How to basic"
+  "author": "Jimmy Fallon"
+  # "title": "How to basic"
 }
 

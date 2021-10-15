@@ -1,46 +1,31 @@
-const mongoose = require('mongoose')
 const config = require('./utils/config')
-
+const logger = require('./utils/logger')
 const app = require('./app')
-// app.use(cors())
-// app.use(express.json())
+const Blog = require('./models/blog')
 
-const blogSchema = new mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number
+app.get('/api/blogs', (req, res) => {
+  Blog.find({}).then((result) => {
+    logger.info(result)
+    res.json({ result })
+  }).catch(err => {
+    logger.error(err)
+    res.status(400).json({ error: err.message })
+  })
 })
 
-const Blog = mongoose.model('Blog', blogSchema)
-
-// mongoose.connect(config.MONGODB_URI).then(() => {
-//   console.log('connected to database')
-// }).catch((err) => {
-//   console.error(err)
-// })
-
-
-app.get('/api/blogs', (request, response) => {
-  Blog
-    .find({})
-    .then(blogs => {
-      console.log({ blogs })
-      response.json(blogs)
-    })
-})
-
-app.post('/api/blogs', (request, response) => {
-  console.log('REQUST BODY', request.body)
-  const blog = new Blog(request.body)
-
-  blog
-    .save()
-    .then(result => {
-      response.status(201).json(result)
-    })
+app.post('/api/blogs', (req, res) => {
+  logger.info('POST HIT', req.body)
+  const blog = req.body
+  blog.likes = 0
+  const newBlog = new Blog(blog)
+  newBlog.save().then(result => {
+    res.status(201).json(result)
+  }).catch(err => {
+    logger.error(err)
+    res.status(400).json({ error: err.message })
+  })
 })
 
 app.listen(config.PORT, () => {
-  console.log(`Server running on port ${config.PORT}`)
+  logger.info(`listing on port ${config.PORT}`)
 })

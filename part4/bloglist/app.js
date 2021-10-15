@@ -1,15 +1,16 @@
 const config = require('./utils/config')
+const logger = require('./utils/logger')
 const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 
-console.log('connecting to Mongo')
+logger.info('connecting to Mongo')
 
 mongoose.connect(config.MONGODB_URI).then(() => {
-  console.log('connected to DB!')
+  logger.info('connected to DB!')
 }).catch(err => {
-  console.log(err)
+  logger.error(err)
 })
 
 app.use(cors())

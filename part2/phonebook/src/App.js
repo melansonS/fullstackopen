@@ -43,9 +43,7 @@ const App = () => {
           })
           .catch((err) => {
             setIsError(true);
-            setAlertMessage(
-              `Information on ${personInPhonebook.name} has been removed from the server`
-            );
+            setAlertMessage(err.response.data.error || err.name);
             setTimeout(() => {
               setIsError(false);
               setAlertMessage(null);
@@ -54,12 +52,22 @@ const App = () => {
       }
     } else {
       const newPerson = { name: newName, number: newNumber };
-      peopleService.createPerson(newPerson).then((person) => {
-        setIsError(false);
-        setAlertMessage(`${person.name} was added!`);
-        setPersons(persons.concat(person));
-        setTimeout(() => setAlertMessage(null), 4000);
-      });
+      peopleService
+        .createPerson(newPerson)
+        .then((person) => {
+          setIsError(false);
+          setAlertMessage(`${person.name} was added!`);
+          setPersons(persons.concat(person));
+          setTimeout(() => setAlertMessage(null), 4000);
+        })
+        .catch((err) => {
+          setIsError(true);
+          setAlertMessage(err.response.data.error || err.name);
+          setTimeout(() => {
+            setIsError(false);
+            setAlertMessage(null);
+          }, 4000);
+        });
     }
 
     setNewName("");

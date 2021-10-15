@@ -7,8 +7,9 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf ./build && cd ../../part2/phonebook && npm run build && cp build -r ../../part3/phonebookbackend",
-    "build:ui:heroku" : "rm -rf /build && cd ../phonebook && npm run build && cp build -r ../phonebookbackend",
-    "checkDB": "node ../commandlinedatabase/mongo.js"
+    "build:ui:heroku": "rm -rf /build && cd ../phonebook && npm run build && cp build -r ../phonebookbackend",
+    "checkDB": "node ../commandlinedatabase/mongo.js",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
@@ -19,5 +20,8 @@
     "mongoose": "^6.0.10",
     "mongoose-unique-validator": "^3.0.0",
     "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.1"
   }
 }

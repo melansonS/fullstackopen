@@ -12,3 +12,16 @@ content-type: application/json
   "author": "Troy Baker",
   "title": "I play basketball"
 }
+
+###
+PUT http://localhost:3005/api/blogs/e
+Content-Type: application/json
+
+{
+  "author": "Jimmy TwoLon",
+  "title": "How 2 basic",
+  "likes": 3
+}
+
+###
+DELETE http://localhost:3005/api/blogs/616d7fd2605cbee5b37c9a65

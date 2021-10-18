@@ -1,4 +1,5 @@
 const config = require('./utils/config')
+require('express-async-errors')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogRouter = require('./controllers/blog')

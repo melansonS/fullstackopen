@@ -1,6 +1,10 @@
 GET http://localhost:3005/api/blogs
 
 ###
+# GET http://localhost:3005/api/blogs/6169adae4306900da455af35
+GET http://localhost:3005/api/blogs/someBogusId
+
+###
 POST http://localhost:3005/api/blogs
 content-type: application/json
 
@@ -8,4 +12,3 @@ content-type: application/json
   "author": "Troy Baker",
   "title": "I play basketball"
 }
-

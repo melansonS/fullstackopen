@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const api = supertest(app)
 
 const initialBlogs = [
@@ -31,9 +32,29 @@ const initialBlogs = [
   }
 ]
 
+const initialUsers = [
+  {
+    'username': 'bigRed',
+    'name': 'red',
+    'blogs': [],
+    'passwordHash': '$2b$10$VFo1k67gJssi8KQ6YxM55O/JyNqCE67nIIRwaX22kQ24lTDwDgaqy',
+    'id': '616db2e707498613ea64fa7d'
+  },
+  {
+    'username': 'bradsley',
+    'name': 'trent',
+    'blogs': [],
+    'passwordHash': '$2b$10$VFo1k67gJssi8KQ6YxM55O/JyNqCE67nIIRwaX22kQ24lTDwDgaqy',
+    'id': '616de9e7aac65e2ffa6da601'
+  }
+]
+
 beforeEach(async () => {
   await Blog.deleteMany({})
+  await User.deleteMany({})
   const promiseArray = initialBlogs.map(blog => new Blog(blog).save())
+  const userPromiseArray = initialUsers.map(user => new User(user).save())
+  userPromiseArray.forEach(promise => promiseArray.push(promise))
   await Promise.all(promiseArray)
 })
 
@@ -116,6 +137,57 @@ describe('updating a blog post', () => {
   })
 })
 
+describe('when new users are initially loaded', () => {
+  test('that we can get the users info', async () => {
+    await api.get('/api/users').expect(200).expect('Content-Type', /application\/json/)
+  })
+})
+
+describe('adding a new user', () => {
+  test('a user is correctly added', async () => {
+    const newUser = {
+      username: 'Tester',
+      name:'tom',
+      password: '123456'
+    }
+    await api.post('/api/users').send(newUser).expect(201)
+    const response = await api.get('/api/users').expect(200)
+    const allUsers = response.body
+    expect(allUsers).toHaveLength(initialUsers.length + 1)
+  })
+
+  test('a username must be unique', async () => {
+    const newUser = { name: 'Newman', username:initialUsers[0].username, password: '1234567' }
+    const response = await api.post('/api/users').send(newUser).expect(400)
+    expect(response.body.err).toContain('`username` to be unique.')
+  })
+
+  test('a new user requires a username', async () => {
+    const newUser = { name: 'Newman', password: '12345678' }
+    const response = await api.post('/api/users').send(newUser).expect(400)
+    expect(response.body.err).toContain('`username` is required')
+  })
+
+  test('a new user requires a name', async () => {
+    const newUser = { username: 'nervious', password: '12345678' }
+    const response = await api.post('/api/users').send(newUser).expect(400)
+    expect(response.body.err).toContain('`name` is required')
+  })
+
+  test('a new user w/o a password', async () => {
+    const newUser =  {
+      username: 'Tester',
+      name:'tom',
+      // password: 't'
+    }
+    const response = await api.post('/api/users').send(newUser).expect(400)
+    expect(response.body.err).toContain('A password longer than 3 characters is required')
+  })
+})
+
 afterAll(() => {
+  console.log('WHEN IS AFTER ALL?? -- before close')
   mongoose.connection.close()
+  console.log('WHEN IS AFTER ALL?? -- after close')
+
 })

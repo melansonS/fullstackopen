@@ -6,5 +6,6 @@ content-type: application/json
 
 {
   "name": "Newman",
-  "username": "nevergonnafail"
+  "username": "tom",
+  "password": "123"
 }

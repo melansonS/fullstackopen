@@ -7,7 +7,8 @@ GET http://localhost:3005/api/blogs/someBogusId
 ###
 POST http://localhost:3005/api/blogs
 content-type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpZ1JlZCIsImlkIjoiNjE2ZGIyZTcwNzQ5ODYxM2VhNjRmYTdkIiwiaWF0IjoxNjM0NzU3ODA2fQ.6GPMvlwckubxi6Y-3GXcfbYT6mQ2whzs15HLJFZzLoM
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvbSIsImlkIjoiNjE3MDk0NmIzMjM2ZDRhNWRmNzg3YjYxIiwiaWF0IjoxNjM0NzY3OTkzfQ.adzLYbXotYsNtFU1cnjZ-_sglWuh-bGPpQkZerlSj3o
+# Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpZ1JlZCIsImlkIjoiNjE2ZGIyZTcwNzQ5ODYxM2VhNjRmYTdkIiwiaWF0IjoxNjM0NzU3ODA2fQ.6GPMvlwckubxi6Y-3GXcfbYT6mQ2whzs15HLJFZzLoM
 
 {
   "author": "Horatio",
@@ -25,4 +26,8 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://localhost:3005/api/blogs/616d7fd2605cbee5b37c9a65
+DELETE http://localhost:3005/api/blogs/6170949e3236d4a5df787b67
+# bigRed
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpZ1JlZCIsImlkIjoiNjE2ZGIyZTcwNzQ5ODYxM2VhNjRmYTdkIiwiaWF0IjoxNjM0NzU3ODA2fQ.6GPMvlwckubxi6Y-3GXcfbYT6mQ2whzs15HLJFZzLoM
+# tom
+# Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvbSIsImlkIjoiNjE3MDk0NmIzMjM2ZDRhNWRmNzg3YjYxIiwiaWF0IjoxNjM0NzY3OTkzfQ.adzLYbXotYsNtFU1cnjZ-_sglWuh-bGPpQkZerlSj3o

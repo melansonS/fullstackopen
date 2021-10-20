@@ -7,10 +7,11 @@ GET http://localhost:3005/api/blogs/someBogusId
 ###
 POST http://localhost:3005/api/blogs
 content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpZ1JlZCIsImlkIjoiNjE2ZGIyZTcwNzQ5ODYxM2VhNjRmYTdkIiwiaWF0IjoxNjM0NzU3ODA2fQ.6GPMvlwckubxi6Y-3GXcfbYT6mQ2whzs15HLJFZzLoM
 
 {
-  "author": "Troy Baker",
-  "title": "I play basketball"
+  "author": "Me!",
+  "title": "And I've got an auth token!"
 }
 
 ###

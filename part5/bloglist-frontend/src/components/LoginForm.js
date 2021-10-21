@@ -12,7 +12,6 @@ const LoginForm = ({ handleLogin }) => {
       setUsername('')
       setPassword('')
     } catch (err) {
-      console.log(err.name)
       console.error(err.message)
     }
   }

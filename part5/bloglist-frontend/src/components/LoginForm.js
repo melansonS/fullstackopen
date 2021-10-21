@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import   loginService  from '../services/login'
 
-const LoginForm = ({ handleUpdateUser }) => {
+const LoginForm = ({ handleLogin }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       const response = await loginService.login({ username, password })
-      handleUpdateUser(response)
+      handleLogin(response)
       setUsername('')
       setPassword('')
     } catch (err) {
@@ -16,7 +16,7 @@ const LoginForm = ({ handleUpdateUser }) => {
       console.error(err.message)
     }
   }
-  return (<form onSubmit={handleLogin}>
+  return (<form onSubmit={handleSubmit}>
     <h2>Login</h2>
     <div>
       Username:

@@ -7,8 +7,14 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState()
 
-  const handleUpdateUser = (user) => {
+  const handleLogin = (user) => {
     setUser(user)
+    window.localStorage.setItem('user', JSON.stringify(user))
+  }
+
+  const handleLogout = () => {
+    setUser(undefined)
+    window.localStorage.removeItem('user')
   }
 
   useEffect(() => {
@@ -17,11 +23,19 @@ const App = () => {
     )
   }, [])
 
+  useEffect(() => {
+    const user = window.localStorage.getItem('user')
+    if(user) {
+      setUser(JSON.parse(user))
+    }
+  }, [])
+
   return (
     <div>
-      <LoginForm handleUpdateUser={handleUpdateUser}/>
+      <LoginForm handleLogin={handleLogin}/>
       {user && (
         <>
+          <button onClick={handleLogout}>Log out</button>
           <div>{user.username} logged in</div>
           <h2>blogs</h2>
           {blogs.map(blog =>

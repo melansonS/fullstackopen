@@ -5,9 +5,10 @@ const User = require('../models/user')
 const config = require('../utils/config')
 
 loginRouter.post('/', async (req, res) => {
+  if(!req.body.username || !req.body.password) {
+    return res.status('400').json({ error: 'missing credential' })
+  }
   const user = await User.findOne({ username: req.body.username })
-  console.log({ user }, user.passwordHash)
-  console.log(user.passwordHash, req.body.password)
   const passwordCorrect = user === null ? false : await bcrypt.compare(req.body.password, user.passwordHash)
 
   if(!(user && passwordCorrect)) {

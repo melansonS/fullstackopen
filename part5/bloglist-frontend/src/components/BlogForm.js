@@ -13,6 +13,7 @@ const BlogForm = ({ createBlog }) => {
     createBlog(({ author, title, url }))
   }
   return <form onSubmit={handleSubmit}>
+    <h2>Create New</h2>
     <div>
       Author:
       <input type="text" required name="Author" value={author} onChange={(({ target }) => setAuthor(target.value))} />

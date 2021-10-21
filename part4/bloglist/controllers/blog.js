@@ -3,6 +3,7 @@ const config = require('../utils/config')
 const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const { requestLogger } = require('../utils/middleware')
 
 blogRouter.get('/', async (req, res) => {
   const results = await Blog.find({}).populate('user',{ username: 1, name: 1, id: 1 })
@@ -10,11 +11,10 @@ blogRouter.get('/', async (req, res) => {
 })
 
 blogRouter.post('/', async (req, res) => {
-  const decodedToken = jwt.verify(req.token, config.SECRET)
-  if(!req.token || !decodedToken.id) {
+  const user = req.user
+  if(!req.token || !user ) {
     return res.status(401).json({ error: 'token invalid or missing!' })
   }
-  const user = await User.findById(decodedToken.id)
   const blog = {
     author: req.body.author,
     title: req.body.title,
@@ -55,9 +55,8 @@ blogRouter.delete('/:id', async (req, res) => {
   if(blog === null) {
     return res.status(404).send({ error:'not found' })
   }
-  const decodedToken = jwt.verify(req.token, config.SECRET)
 
-  if(blog.user.toString() === decodedToken.id) {
+  if(blog.user.toString() === req.user._id.toString()) {
     const response = await Blog.findByIdAndRemove(req.params.id)
     if(response === null) {
       return res.status(404).send({ error:'not found' })

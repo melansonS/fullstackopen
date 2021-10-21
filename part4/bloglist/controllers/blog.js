@@ -1,9 +1,5 @@
 const blogRouter = require('express').Router()
-const config = require('../utils/config')
-const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const { requestLogger } = require('../utils/middleware')
 
 blogRouter.get('/', async (req, res) => {
   const results = await Blog.find({}).populate('user',{ username: 1, name: 1, id: 1 })
@@ -29,11 +25,17 @@ blogRouter.post('/', async (req, res) => {
 })
 
 blogRouter.put('/:id', async (req, res) => {
-  const { author, title, likes } = req.body
+  const { author, title, likes, url, user } = req.body
   if(!author || !title || !likes) {
     return res.status(400).json({ error: 'missing blog data {[author], [title], [likes]} required' })
   }
   const blog = { author, title, likes }
+  if(user) {
+    blog.user = user.id
+  }
+  if(url) {
+    blog.url = url
+  }
 
   const response = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true })
   if(response === null) {

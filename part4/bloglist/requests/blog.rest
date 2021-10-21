@@ -16,15 +16,14 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRvb
 }
 
 ###
-PUT http://localhost:3005/api/blogs/e
+PUT http://localhost:3005/api/blogs/6171ce032fd4bc228cf08176
 Content-Type: application/json
 
 {
-  "author": "Jimmy TwoLon",
-  "title": "How 2 basic",
-  "likes": 3
+  "title":	"working with togglables",
+  "author":	"Mr. Mime",
+  "likes":	1
 }
-
 ###
 DELETE http://localhost:3005/api/blogs/61717078974e939fcbfeb1c7
 # bigRed

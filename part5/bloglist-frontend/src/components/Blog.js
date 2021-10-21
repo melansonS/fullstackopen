@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
-const Blog = ({ blog }) =>   {
+const Blog = ({ blog, handleLike }) =>   {
   const [visible, setVisible] = useState(false)
+
+  const likeBlog = async () => {
+    handleLike(blog)
+  }
 
   return (
     <div className="blog-container">
@@ -13,7 +17,7 @@ const Blog = ({ blog }) =>   {
         <p>{blog.url}</p>
         <div>
           {blog.likes}
-          <button>like</button>
+          <button onClick={likeBlog}>like</button>
         </div>
       </div>}
     </div>)

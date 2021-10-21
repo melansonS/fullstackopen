@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const { extractUserAuthToken } = require('../utils/blog_helper')
 const app = require('../app')
 const Blog = require('../models/blog')
 const User = require('../models/user')
@@ -38,22 +39,27 @@ const initialUsers = [
     'name': 'red',
     'blogs': [],
     'passwordHash': '$2b$10$VFo1k67gJssi8KQ6YxM55O/JyNqCE67nIIRwaX22kQ24lTDwDgaqy',
-    'id': '616db2e707498613ea64fa7d'
+    'id': '616db2e707498613ea64fa7d',
   },
   {
     'username': 'bradsley',
     'name': 'trent',
     'blogs': [],
     'passwordHash': '$2b$10$VFo1k67gJssi8KQ6YxM55O/JyNqCE67nIIRwaX22kQ24lTDwDgaqy',
-    'id': '616de9e7aac65e2ffa6da601'
+    'id': '616de9e7aac65e2ffa6da601',
   }
 ]
 
 beforeEach(async () => {
   await Blog.deleteMany({})
   await User.deleteMany({})
-  const promiseArray = initialBlogs.map(blog => new Blog(blog).save())
-  const userPromiseArray = initialUsers.map(user => new User(user).save())
+  const newUsers = initialUsers.map(user => new User(user))
+  const newBlogs = initialBlogs.map((blog) => {
+    blog.user = newUsers[0]._id
+    return new Blog(blog)
+  })
+  const promiseArray = newBlogs.map(blog => blog.save())
+  const userPromiseArray = newUsers.map(user => user.save())
   userPromiseArray.forEach(promise => promiseArray.push(promise))
   await Promise.all(promiseArray)
 })
@@ -78,38 +84,53 @@ describe('when blogs are initally loaded', () => {
   })
 })
 
-describe('addition of a new note', () => {
+describe('addition of a new blog', () => {
   test('that the new blog post is properly added', async () => {
+    const bearerToken = await extractUserAuthToken(initialUsers[0].username)
     const newBlog = { author: 'patrick steward' , title: 'jest test blog' }
-    await api.post('/api/blogs').send(newBlog).expect(201)
+    await api.post('/api/blogs').send(newBlog).set('Authorization', bearerToken).expect(201)
 
     const blogsAfterUpdate = await api.get('/api/blogs')
     expect(blogsAfterUpdate.body).toHaveLength(initialBlogs.length + 1)
   })
 
   test('that the new blog post has a default value of 0 likes', async () => {
+    const bearerToken = await extractUserAuthToken(initialUsers[0].username)
     const newBlog = { author: 'patrick steward' , title: 'jest test blog' }
-    const response = await api.post('/api/blogs').send(newBlog).expect(201)
+    const response = await api.post('/api/blogs').set('Authorization', bearerToken).send(newBlog).expect(201)
     const blog = response.body
     expect(blog.likes).toBe(0)
   })
 
   test('that requests without an author and title result in a 400', async () => {
-    await api.post('/api/blogs').send({}).expect(400)
+    const bearerToken = await extractUserAuthToken(initialUsers[0].username)
+    await api.post('/api/blogs').set('Authorization', bearerToken).send({}).expect(400)
+  })
+
+  test('that requests without an bearer token result in a 401 unauthorized response', async () => {
+    await api.post('/api/blogs').send({ author: 'no', title: 'auth token' }).expect(401)
   })
 })
 
 describe('deleting a blog post', () => {
   test('that the server responds with a 404 when given an unknow id', async () => {
-    await api.delete('/api/blogs/6169adae4306900da455af33').expect(404)
+    const blogUserToken = await extractUserAuthToken(initialUsers[0].username)
+    await api.delete('/api/blogs/6169adae4306900da455af33').set('Authorization', blogUserToken).expect(404)
   })
 
   test('that the server responds with a 400 on invalid/malformatted ids', async () => {
-    await api.delete('/api/blogs/NotARealId').expect(400)
+    const blogUserToken = await extractUserAuthToken(initialUsers[0].username)
+    await api.delete('/api/blogs/NotARealId').set('Authorization', blogUserToken).expect(400)
+  })
+
+  test('that only the blog\'s user is authorized to delete the blog', async () => {
+    const incorrectBlogUserToken = await extractUserAuthToken(initialUsers[1].username)
+    await api.delete(`/api/blogs/${initialBlogs[0]._id}`).set('Authorization', incorrectBlogUserToken).expect(401)
   })
 
   test('that a blog post is indeed being removed', async () => {
-    await api.delete(`/api/blogs/${initialBlogs[1]._id}`).expect(200)
+    const blogUserToken = await extractUserAuthToken(initialUsers[0].username)
+    await api.delete(`/api/blogs/${initialBlogs[1]._id}`).set('Authorization', blogUserToken).expect(200)
 
     const response = await api.get('/api/blogs').expect(200)
     const blogsAfterDelete = response.body
@@ -131,7 +152,6 @@ describe('updating a blog post', () => {
   test('that the blog post is being correctly updated', async () => {
     const { author, title, likes } = initialBlogs[0]
     const newBlog = { author, title, likes: likes + 1 }
-    console.log({ newBlog, id: initialBlogs[0]._id })
     const response = await api.put(`/api/blogs/${initialBlogs[0]._id}`).send(newBlog).expect(200)
     expect(response.body.likes).toBe(likes + 1)
   })
@@ -186,8 +206,5 @@ describe('adding a new user', () => {
 })
 
 afterAll(() => {
-  console.log('WHEN IS AFTER ALL?? -- before close')
   mongoose.connection.close()
-  console.log('WHEN IS AFTER ALL?? -- after close')
-
 })

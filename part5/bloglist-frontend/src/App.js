@@ -53,6 +53,18 @@ const App = () => {
     }
   }
 
+  const handleDelete = async (blog) => {
+    try {
+      const deletedBlog = await blogService.deleteBlog(blog)
+      const fileteredBlogs = blogs.filter(blog => blog.id !== deletedBlog.id)
+      setBlogs(fileteredBlogs)
+      handleSetAlertMessage(`blog: ${blog.title} has been removed`)
+    } catch (err) {
+      console.log(err)
+      handleSetAlertMessage('something went wrong while deleting this blog...', true)
+    }
+  }
+
   const handleSetAlertMessage = (message, isError) => {
     if(isError) {
       setErrorMessage(message)
@@ -93,7 +105,14 @@ const App = () => {
             <BlogForm createBlog={handleCreateBlog}/>
           </Togglable>
           <h2>blogs</h2>
-          {blogs.sort((a,b) => a.likes < b.likes).map(blog => <Blog key={blog.id} blog={blog} handleLike={handleLike}/>)}
+          {blogs.sort((a,b) => a.likes < b.likes)
+            .map(blog => <Blog
+              key={blog.id}
+              blog={blog}
+              handleDelete={handleDelete}
+              handleLike={handleLike}
+              username={user && user.username}
+            />)}
         </>
       ) : <LoginForm handleLogin={handleLogin} handleSetAlertMessage={handleSetAlertMessage}/>}
     </div>

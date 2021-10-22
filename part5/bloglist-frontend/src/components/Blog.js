@@ -1,9 +1,24 @@
 import React, { useState } from 'react'
-const Blog = ({ blog, handleLike }) =>   {
+const Blog = ({ blog, handleLike, handleDelete, username }) =>   {
   const [visible, setVisible] = useState(false)
 
   const likeBlog = async () => {
     handleLike(blog)
+  }
+
+  const deleteBlog = async () => {
+    const confirmation = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+    if(confirmation) {
+      handleDelete(blog)
+    }
+  }
+
+  const renderDeleteButton = () => {
+    if(blog.user && blog.user.username === username) {
+      return <button onClick={deleteBlog}>Delete</button>
+    } else {
+      return null
+    }
   }
 
   return (
@@ -19,6 +34,7 @@ const Blog = ({ blog, handleLike }) =>   {
           {blog.likes}
           <button onClick={likeBlog}>like</button>
         </div>
+        {renderDeleteButton()}
       </div>}
     </div>)
 }

@@ -21,11 +21,11 @@ const LoginForm = ({ handleLogin,handleSetAlertMessage }) => {
     <h2>Login</h2>
     <div>
       Username:
-      <input type="text" value={username} onChange={({ target }) => setUsername(target.value)}></input>
+      <input type="text" id="username-input" value={username} onChange={({ target }) => setUsername(target.value)}></input>
     </div>
     <div>
       Password:
-      <input type="text" value={password} onChange={({ target }) => setPassword(target.value)}></input>
+      <input type="text" id="password-input" value={password} onChange={({ target }) => setPassword(target.value)}></input>
     </div>
     <button type="submit">Login</button>
   </form>)

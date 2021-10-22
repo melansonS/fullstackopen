@@ -99,7 +99,7 @@ const App = () => {
       {errorMessage && <AlertMessage error message={errorMessage}/>}
       {user ? (
         <>
-          <button onClick={handleLogout}>Log out</button>
+          <button id="logout-button" onClick={handleLogout}>Log out</button>
           <div>{user.username} logged in</div>
           <Togglable buttonLabel="create new blog" ref={blogFormRef}>
             <BlogForm createBlog={handleCreateBlog}/>

@@ -54,7 +54,7 @@ describe('Blog app', function() {
       cy.get('.like-button').click()
       cy.get('.likes').contains('2')
     })
-    it.only('OP can delete their own blogs', function () {
+    it('OP can delete their own blogs', function () {
       const blog = { author: 'JamesWard', title: 'Not long for this world' }
       cy.createBlog(blog)
       cy.contains('JamesWard').get('.show-blog-button').click()
@@ -62,12 +62,29 @@ describe('Blog app', function() {
       cy.get('.alert-message').contains('removed')
       cy.get('.blog-container').should('not.exist')
     })
-    it.only('cannot delete blogs that were created by another user', function () {
+    it('cannot delete blogs that were created by another user', function () {
       const blog = { author: 'JamesWard', title: 'Not long for this world' }
       cy.createBlog(blog)
       cy.login({ username: 'jim', password: '123' })
       cy.get('.show-blog-button').click()
       cy.get('delete-button').should('not.exist')
+    })
+    it.only('orders blogs according to their likes', function() {
+      const blogs = [
+        { author: 'JamesWard', title: 'has some likes', likes: 2 },
+        { author: 'JamesWard', title: 'no likes :(' },
+        { author: 'JamesWard', title: 'Initially popular', likes: 3 }
+      ]
+      blogs.forEach(blog => cy.createBlog(blog))
+      cy.get('.blog-container').eq(0).contains('Initially popular')
+      cy.get('.blog-container').eq(1).contains('some likes')
+      cy.get('.blog-container').eq(2).contains('no likes')
+
+      cy.get('.blog-container').eq(1).within(() => {
+        cy.get('.show-blog-button').click()
+      })
+      cy.get('.like-button').click().wait(200).click().wait(200)
+      cy.get('.blog-container').eq(0).contains('some likes')
     })
   })
 })

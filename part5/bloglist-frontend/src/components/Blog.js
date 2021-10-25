@@ -16,7 +16,7 @@ const Blog = ({ blog, handleLike, handleDelete, username }) =>   {
 
   const renderDeleteButton = () => {
     if(blog.user && blog.user.username === username) {
-      return <button onClick={deleteBlog}>Delete</button>
+      return <button className="delete-button" onClick={deleteBlog}>Delete</button>
     } else {
       return null
     }

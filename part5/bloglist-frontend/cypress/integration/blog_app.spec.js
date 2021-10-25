@@ -2,9 +2,10 @@ describe('Blog app', function() {
   const baseApiUrl = 'http://localhost:3005'
   beforeEach(function() {
     cy.request('POST', `${baseApiUrl}/api/testing/reset`).then(() => {
-
-      const newUser = { username: 'tom', password:'123', name:'brad' }
-      cy.request('POST', `${baseApiUrl}/api/users`, newUser)
+      const newTom = { username: 'tom', password:'123', name:'brad' }
+      const newJim = { username: 'jim', password:'123', name:'notBrad' }
+      cy.request('POST', `${baseApiUrl}/api/users`, newTom)
+      cy.request('POST', `${baseApiUrl}/api/users`, newJim)
     })
     cy.visit('http://localhost:3000')
   })
@@ -33,12 +34,7 @@ describe('Blog app', function() {
 
   describe('When logged in', function () {
     beforeEach(function () {
-      const user = { username: 'tom', password: '123' }
-      cy.request('POST', `${baseApiUrl}/api/login`, user).then(response => {
-        localStorage.setItem('user', JSON.stringify(response.body))
-        cy.visit('http://localhost:3000')
-      })
-
+      cy.login({ username: 'tom', password: '123' })
     })
 
     it('A blog can be created', function () {
@@ -49,20 +45,29 @@ describe('Blog app', function() {
       cy.get('#create-blog-button').click()
       cy.get('.blog-container').contains('Cool test blog')
     })
-    it.only('A blog can be liked', function () {
+    it('A blog can be liked', function () {
       const blog = { author: 'Jimeth', title: 'All I want is for this to be liked' }
-      const token = JSON.parse(window.localStorage.getItem('user')).token
-      cy.request({
-        method: 'POST',
-        url: `${baseApiUrl}/api/blogs`,
-        headers: { Authorization: `bearer ${token}` },
-        body: blog })
-      cy.visit('http://localhost:3000')
+      cy.createBlog(blog)
       cy.contains('Jimeth').get('.show-blog-button').click()
       cy.get('.like-button').click()
       cy.get('.likes').contains('1')
       cy.get('.like-button').click()
       cy.get('.likes').contains('2')
+    })
+    it.only('OP can delete their own blogs', function () {
+      const blog = { author: 'JamesWard', title: 'Not long for this world' }
+      cy.createBlog(blog)
+      cy.contains('JamesWard').get('.show-blog-button').click()
+      cy.get('.delete-button').click()
+      cy.get('.alert-message').contains('removed')
+      cy.get('.blog-container').should('not.exist')
+    })
+    it.only('cannot delete blogs that were created by another user', function () {
+      const blog = { author: 'JamesWard', title: 'Not long for this world' }
+      cy.createBlog(blog)
+      cy.login({ username: 'jim', password: '123' })
+      cy.get('.show-blog-button').click()
+      cy.get('delete-button').should('not.exist')
     })
   })
 })

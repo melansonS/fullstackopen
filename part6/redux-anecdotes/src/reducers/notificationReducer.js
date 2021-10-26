@@ -1,4 +1,4 @@
-const notificationReducer = (state = "INITIAL", action) => {
+const notificationReducer = (state = "", action) => {
   console.log({state, action})
   switch(action.type) {
     case "SET_NOTIFICATION":

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link, Switch, Route, useRouteMatch}from 'react-router-dom'
+import { Link, Switch, Route, useRouteMatch, useHistory}from 'react-router-dom'
 
 const Menu = () => {
   const padding = {
@@ -31,6 +31,11 @@ const Anecdote = ({anecdote}) => {
   </div>)
 }
 
+const Notification = ({notification}) => {
+  const style = {'border': '1px solid black', 'padding': '5px'}
+  return <div style={style}>{notification}</div>
+}
+
 const About = () => (
   <div>
     <h2>About anecdote app</h2>
@@ -58,7 +63,6 @@ const CreateNew = (props) => {
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
 
-
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
@@ -67,6 +71,8 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+
+    props.handleSetNotification(`a new anecdote '${content}' created!`, 10000)
   }
 
   return (
@@ -114,10 +120,23 @@ const App = () => {
   const anecdote = match ? anecdotes.find(anecdote => anecdote.id === match.params.id) : null
 
   const [notification, setNotification] = useState('')
-
+  const history = useHistory()
+  
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
+    history.push('/')
+  }
+
+  let notificationTimeout
+  const handleSetNotification = (message, time) => {
+    if(notificationTimeout){
+      window.clearTimeout(notificationTimeout)
+    }
+    setNotification(message)
+    notificationTimeout = setTimeout(() => {
+      setNotification("")
+    }, time)
   }
 
   const anecdoteById = (id) =>
@@ -138,12 +157,13 @@ const App = () => {
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      {notification && <Notification notification={notification}></Notification>}
       <Switch>
       <Route path="/about">
         <About />
       </Route>
       <Route path="/create">
-        <CreateNew addNew={addNew} />
+        <CreateNew addNew={addNew} handleSetNotification={handleSetNotification}/>
       </Route>
       <Route path="/anecdotes/:id">
         <Anecdote anecdote={anecdote}/>

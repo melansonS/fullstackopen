@@ -30,7 +30,7 @@ blogRouter.post('/:id/comments', async (req, res) => {
   if(!comment) {
     return res.status(400).json({ error: 'comment must not be empty' })
   }
-  const blog = await Blog.findById(req.params.id)
+  const blog = await Blog.findById(req.params.id).populate('user', { username: 1, name: 1, id: 1 })
   blog.comments = blog.comments.concat(comment)
   const response = await blog.save()
   res.send(response)

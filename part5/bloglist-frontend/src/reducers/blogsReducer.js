@@ -9,6 +9,8 @@ const blogsReducer = (state = [], action) => {
     return state.concat(action.blog)
   case 'LIKE_BLOG':
     return state.map(blog => blog.id === action.blog.id ? action.blog : blog)
+  case 'ADD_COMMENT':
+    return state.map(blog => blog.id === action.blog.id ? action.blog : blog)
   case 'DELETE_BLOG':
     return state.filter(blog => blog.id !== action.blog.id)
   default:
@@ -51,6 +53,21 @@ export const likeBlog = (blog) => {
     } catch (err) {
       console.log(err)
       dispatch(displayNotification('unable to like this blog post...', true))
+    }
+  }
+}
+
+export const addComment = (id, comment) => {
+  return async dispatch => {
+    try {
+      const updatedBlog = await blogService.addComment(id, comment)
+      dispatch({
+        type:'ADD_COMMENT',
+        blog: updatedBlog
+      })
+    } catch(err) {
+      console.log(err)
+      dispatch(displayNotification('unable to add a comment to this blog post...', true))
     }
   }
 }

@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { likeBlog, deleteBlog } from '../reducers/blogsReducer'
+import { likeBlog, deleteBlog, addComment } from '../reducers/blogsReducer'
 import { useHistory, useParams } from 'react-router'
-const Blog = () =>   {
+const Blog = () => {
+  const [newComment, setNewComment] = useState('')
   const params = useParams()
   const history = useHistory()
   const dispatch = useDispatch()
@@ -19,6 +20,12 @@ const Blog = () =>   {
       dispatch(deleteBlog(blog))
       history.push('/')
     }
+  }
+
+  const handleAddComment = async (e) => {
+    e.preventDefault()
+    dispatch(addComment(blog.id, newComment))
+    setNewComment('')
   }
 
   const renderDeleteButton = () => {
@@ -41,9 +48,13 @@ const Blog = () =>   {
           <button onClick={handleLike} className="like-button">like</button>
         </div>
         <div>add by {blog.user.name}</div>
+        <h3>Comments</h3>
+        <form onSubmit={handleAddComment}>
+          <input type="text" value={newComment} onChange={e => setNewComment(e.target.value)}></input>
+          <input type="submit" value="add comment"></input>
+        </form>
         {blog.comments && blog.comments.length >= 1 && (
           <div>
-            <h3>Comments</h3>
             <ul>
               {blog.comments.map((comment, index) => <li key={`${index}-${comment[0]}`}>{comment}</li>)}
             </ul>

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
+import { displayNotification } from './reducers/notificationReducer'
 import blogService from './services/blogs'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
@@ -9,9 +11,8 @@ import Togglable  from './components/Togglable'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState()
-  const [message, setMessage] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
 
+  const dispatch = useDispatch()
   const blogFormRef = useRef()
 
   const handleLogin = (user) => {
@@ -46,6 +47,7 @@ const App = () => {
       const blogIndex = blogs.findIndex(b => b.id === blog.id)
       const newBlogArray = [...blogs]
       newBlogArray[blogIndex] = liked
+      handleSetAlertMessage('you liked :D')
       setBlogs(newBlogArray)
     } catch (err) {
       console.log(err)
@@ -66,17 +68,7 @@ const App = () => {
   }
 
   const handleSetAlertMessage = (message, isError) => {
-    if(isError) {
-      setErrorMessage(message)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    } else {
-      setMessage(message)
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-    }
+    dispatch(displayNotification(message, isError))
   }
 
   useEffect(() => {
@@ -95,8 +87,7 @@ const App = () => {
   }, [])
   return (
     <div>
-      {message && <AlertMessage message={message} />}
-      {errorMessage && <AlertMessage error message={errorMessage}/>}
+      <AlertMessage />
       {user ? (
         <>
           <button id="logout-button" onClick={handleLogout}>Log out</button>

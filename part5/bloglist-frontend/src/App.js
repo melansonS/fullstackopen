@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, Route, Switch } from 'react-router-dom'
 import { initializeBlogs } from './reducers/blogsReducer'
-import { initializeUser, logUserOut } from './reducers/userReducer'
+import { initializeUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/usersReducer'
 import blogService from './services/blogs'
 import userService from './services/users'
@@ -13,6 +13,7 @@ import AlertMessage from './components/AlertMessage'
 import Togglable  from './components/Togglable'
 import User from './components/User'
 import UsersTable from './components/UsersTable'
+import Navbar from './components/Navbar'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
@@ -20,9 +21,6 @@ const App = () => {
   const dispatch = useDispatch()
   const blogFormRef = useRef()
 
-  const handleLogout = () => {
-    dispatch(logUserOut())
-  }
   useEffect(() => {
     blogService.getAll().then(blogs => {
       dispatch(initializeBlogs(blogs))
@@ -44,8 +42,7 @@ const App = () => {
       <AlertMessage />
       {user ? (
         <>
-          <button id="logout-button" onClick={handleLogout}>Log out</button>
-          <div>{user.username} logged in</div>
+          <Navbar />
           <Switch>
             <Route path="/users/:id">
               <User />

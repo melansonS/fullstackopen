@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { displayNotification } from './reducers/notificationReducer'
 import blogService from './services/blogs'
 import Blog from './components/Blog'
@@ -7,10 +7,12 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import AlertMessage from './components/AlertMessage'
 import Togglable  from './components/Togglable'
+import { addBlog, initializeBlogs } from './reducers/blogsReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const [oldBlogs, setBlogs] = useState([])
   const [user, setUser] = useState()
+  const blogs = useSelector(state => state.blogs)
 
   const dispatch = useDispatch()
   const blogFormRef = useRef()
@@ -28,17 +30,7 @@ const App = () => {
   }
 
   const handleCreateBlog = async (blog) => {
-    try {
-      const created = await blogService.create(blog)
-      if(created) {
-        setBlogs([...blogs, created])
-        handleSetAlertMessage(`a new blog ${blog.title} by ${blog.author} added!`)
-        blogFormRef.current.toggleVisibility()
-      }
-    } catch (err) {
-      console.log(err)
-      handleSetAlertMessage('something went wrong while trying to add the blog!', true)
-    }
+    dispatch(addBlog(blog))
   }
 
   const handleLike = async (blog) => {
@@ -47,7 +39,6 @@ const App = () => {
       const blogIndex = blogs.findIndex(b => b.id === blog.id)
       const newBlogArray = [...blogs]
       newBlogArray[blogIndex] = liked
-      handleSetAlertMessage('you liked :D')
       setBlogs(newBlogArray)
     } catch (err) {
       console.log(err)
@@ -72,8 +63,9 @@ const App = () => {
   }
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+    blogService.getAll().then(blogs => {
+      dispatch(initializeBlogs(blogs))
+    }
     )
   }, [])
 

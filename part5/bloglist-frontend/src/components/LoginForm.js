@@ -8,10 +8,10 @@ const LoginForm = ({ handleLogin,handleSetAlertMessage }) => {
     e.preventDefault()
     try {
       const response = await loginService.login({ username, password })
-      handleSetAlertMessage(`successfully logged in as ${username}`)
-      handleLogin(response)
       setUsername('')
       setPassword('')
+      handleSetAlertMessage(`successfully logged in as ${username}`)
+      handleLogin(response)
     } catch (err) {
       console.error(err.message)
       handleSetAlertMessage('wrong username or password',true)

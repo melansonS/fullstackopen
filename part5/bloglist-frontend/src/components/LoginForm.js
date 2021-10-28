@@ -1,21 +1,14 @@
 import React, { useState } from 'react'
-import   loginService  from '../services/login'
+import { useDispatch } from 'react-redux'
+import { logUserIn } from '../reducers/userReducer'
 
-const LoginForm = ({ handleLogin,handleSetAlertMessage }) => {
+const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const dispatch = useDispatch()
   const handleSubmit = async (e) => {
     e.preventDefault()
-    try {
-      const response = await loginService.login({ username, password })
-      setUsername('')
-      setPassword('')
-      handleSetAlertMessage(`successfully logged in as ${username}`)
-      handleLogin(response)
-    } catch (err) {
-      console.error(err.message)
-      handleSetAlertMessage('wrong username or password',true)
-    }
+    dispatch(logUserIn({ username, password }))
   }
   return (<form onSubmit={handleSubmit}>
     <h2>Login</h2>

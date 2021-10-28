@@ -25,6 +25,16 @@ blogRouter.post('/', async (req, res) => {
   await user.save()
   res.status(201).json(result)
 })
+blogRouter.post('/:id/comments', async (req, res) => {
+  const comment = req.body.comment
+  if(!comment) {
+    return res.status(400).json({ error: 'comment must not be empty' })
+  }
+  const blog = await Blog.findById(req.params.id)
+  blog.comments = blog.comments.concat(comment)
+  const response = await blog.save()
+  res.send(response)
+})
 
 blogRouter.put('/:id', async (req, res) => {
   const { author, title, likes, url, user } = req.body

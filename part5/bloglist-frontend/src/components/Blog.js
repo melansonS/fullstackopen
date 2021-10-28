@@ -8,6 +8,7 @@ const Blog = () =>   {
   const dispatch = useDispatch()
   const blog = useSelector(state => state.blogs.find(blog => blog.id === params.id))
   const user = useSelector(state => state.user)
+
   const handleLike = async () => {
     dispatch(likeBlog(blog))
   }
@@ -40,6 +41,14 @@ const Blog = () =>   {
           <button onClick={handleLike} className="like-button">like</button>
         </div>
         <div>add by {blog.user.name}</div>
+        {blog.comments && blog.comments.length >= 1 && (
+          <div>
+            <h3>Comments</h3>
+            <ul>
+              {blog.comments.map((comment, index) => <li key={`${index}-${comment[0]}`}>{comment}</li>)}
+            </ul>
+          </div>
+        )}
         {renderDeleteButton()}
       </>)
         :

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Route, Switch } from 'react-router-dom'
 import blogService from './services/blogs'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
@@ -8,6 +9,9 @@ import AlertMessage from './components/AlertMessage'
 import Togglable  from './components/Togglable'
 import { initializeBlogs } from './reducers/blogsReducer'
 import { initializeUser, logUserOut } from './reducers/userReducer'
+import UsersTable from './components/UsersTable'
+import userService from './services/users'
+import { initializeUsers } from './reducers/usersReducer'
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
@@ -21,6 +25,9 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs => {
       dispatch(initializeBlogs(blogs))
+    })
+    userService.getAll().then(users => {
+      dispatch(initializeUsers(users))
     })
   }, [])
 
@@ -38,18 +45,25 @@ const App = () => {
         <>
           <button id="logout-button" onClick={handleLogout}>Log out</button>
           <div>{user.username} logged in</div>
-          <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-            <BlogForm />
-          </Togglable>
-          <h2>blogs</h2>
-          {user && blogs.sort((a,b) => a.likes < b.likes)
-            .map(blog =>
-              <Blog
-                key={blog.id}
-                blog={blog}
-                username={user.username}
-              />
-            )}
+          <Switch>
+            <Route path="/users">
+              <UsersTable />
+            </Route>
+            <Route path="/">
+              <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+                <BlogForm />
+              </Togglable>
+              <h2>blogs</h2>
+              {user && blogs.sort((a,b) => a.likes < b.likes)
+                .map(blog =>
+                  <Blog
+                    key={blog.id}
+                    blog={blog}
+                    username={user.username}
+                  />
+                )}
+            </Route>
+          </Switch>
         </>
       ) : <LoginForm />}
     </div>

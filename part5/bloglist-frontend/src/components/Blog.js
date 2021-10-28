@@ -44,8 +44,6 @@ const Blog = ({ blog, username }) =>   {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  handleLike: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
 }
 

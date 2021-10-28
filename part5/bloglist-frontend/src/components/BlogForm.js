@@ -10,10 +10,10 @@ const BlogForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    dispatch(addBlog({ author, title, url }))
     setAuthor('')
     setTitle('')
     setUrl('')
-    dispatch(addBlog({ author, title, url }))
 
   }
   return <form onSubmit={handleSubmit}>

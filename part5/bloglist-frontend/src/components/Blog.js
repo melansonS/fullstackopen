@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { likeBlog, deleteBlog } from '../reducers/blogsReducer'
-const Blog = ({ blog, username }) =>   {
-  const [visible, setVisible] = useState(false)
+import { useHistory, useParams } from 'react-router'
+const Blog = () =>   {
+  const params = useParams()
+  const history = useHistory()
   const dispatch = useDispatch()
-
+  const blog = useSelector(state => state.blogs.find(blog => blog.id === params.id))
+  const user = useSelector(state => state.user)
   const handleLike = async () => {
     dispatch(likeBlog(blog))
   }
@@ -14,11 +16,12 @@ const Blog = ({ blog, username }) =>   {
     const confirmation = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
     if(confirmation) {
       dispatch(deleteBlog(blog))
+      history.push('/')
     }
   }
 
   const renderDeleteButton = () => {
-    if(blog.user && blog.user.username === username) {
+    if(blog.user && blog.user.username === user.username) {
       return <button className="delete-button" onClick={handleDelete}>Delete</button>
     } else {
       return null
@@ -27,24 +30,23 @@ const Blog = ({ blog, username }) =>   {
 
   return (
     <div className="blog-container">
-      <div>
-        {blog.title} {blog.author}
-        <button className="show-blog-button" onClick={() => setVisible(!visible)}>{visible ? 'hide':'show'}</button>
-      </div>
-      {visible && <div>
-        <p className="url">{blog.url}</p>
+      {blog ? (<>
+        <div>
+          <h2>{blog.title} {blog.author}</h2>
+        </div>
+        <a className="url" href={blog.url} >{blog.url}</a>
         <div className="likes">
-          {blog.likes}
+          {blog.likes} likes
           <button onClick={handleLike} className="like-button">like</button>
         </div>
+        <div>add by {blog.user.name}</div>
         {renderDeleteButton()}
-      </div>}
-    </div>)
-}
+      </>)
+        :
+        <div>Blog not found...</div>
+      }
 
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-  username: PropTypes.string.isRequired,
+    </div>)
 }
 
 export default Blog

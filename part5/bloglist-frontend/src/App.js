@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Route, Switch } from 'react-router-dom'
+import { Link, Route, Switch } from 'react-router-dom'
 import { initializeBlogs } from './reducers/blogsReducer'
 import { initializeUser, logUserOut } from './reducers/userReducer'
 import { initializeUsers } from './reducers/usersReducer'
@@ -53,6 +53,9 @@ const App = () => {
             <Route path="/users">
               <UsersTable />
             </Route>
+            <Route path="/blogs/:id">
+              <Blog />
+            </Route>
             <Route path="/">
               <Togglable buttonLabel="create new blog" ref={blogFormRef}>
                 <BlogForm />
@@ -60,11 +63,11 @@ const App = () => {
               <h2>blogs</h2>
               {user && blogs.sort((a,b) => a.likes < b.likes)
                 .map(blog =>
-                  <Blog
-                    key={blog.id}
-                    blog={blog}
-                    username={user.username}
-                  />
+                  <div key={blog.id} className='blog-link'>
+                    <Link to={`/blogs/${blog.id}`}>
+                      {blog.title} {blog.author}
+                    </Link>
+                  </div>
                 )}
             </Route>
           </Switch>

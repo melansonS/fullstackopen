@@ -1,22 +1,25 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-const Blog = ({ blog, handleLike, handleDelete, username }) =>   {
+import { useDispatch } from 'react-redux'
+import { likeBlog, deleteBlog } from '../reducers/blogsReducer'
+const Blog = ({ blog, username }) =>   {
   const [visible, setVisible] = useState(false)
+  const dispatch = useDispatch()
 
-  const likeBlog = async () => {
-    handleLike(blog)
+  const handleLike = async () => {
+    dispatch(likeBlog(blog))
   }
 
-  const deleteBlog = async () => {
+  const handleDelete = async () => {
     const confirmation = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
     if(confirmation) {
-      handleDelete(blog)
+      dispatch(deleteBlog(blog))
     }
   }
 
   const renderDeleteButton = () => {
     if(blog.user && blog.user.username === username) {
-      return <button className="delete-button" onClick={deleteBlog}>Delete</button>
+      return <button className="delete-button" onClick={handleDelete}>Delete</button>
     } else {
       return null
     }
@@ -32,7 +35,7 @@ const Blog = ({ blog, handleLike, handleDelete, username }) =>   {
         <p className="url">{blog.url}</p>
         <div className="likes">
           {blog.likes}
-          <button onClick={likeBlog} className="like-button">like</button>
+          <button onClick={handleLike} className="like-button">like</button>
         </div>
         {renderDeleteButton()}
       </div>}

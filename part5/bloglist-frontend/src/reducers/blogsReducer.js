@@ -63,6 +63,8 @@ export const deleteBlog = (blog) => {
         type:'DELETE_BLOG',
         blog: deletedBlog
       })
+      dispatch(displayNotification(`blog '${blog.title}' has been deleted`))
+
     } catch (err) {
       console.log(err)
       dispatch(displayNotification('unable to like this blog post...', true))

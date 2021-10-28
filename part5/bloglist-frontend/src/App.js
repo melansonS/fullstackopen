@@ -6,7 +6,7 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import AlertMessage from './components/AlertMessage'
 import Togglable  from './components/Togglable'
-import { addBlog, deleteBlog, initializeBlogs, likeBlog } from './reducers/blogsReducer'
+import { initializeBlogs } from './reducers/blogsReducer'
 import { initializeUser, logUserOut } from './reducers/userReducer'
 
 const App = () => {
@@ -18,19 +18,6 @@ const App = () => {
   const handleLogout = () => {
     dispatch(logUserOut())
   }
-
-  const handleCreateBlog = async (blog) => {
-    dispatch(addBlog(blog))
-  }
-
-  const handleLike = async (blog) => {
-    dispatch(likeBlog(blog))
-  }
-
-  const handleDelete = async (blog) => {
-    dispatch(deleteBlog(blog))
-  }
-
   useEffect(() => {
     blogService.getAll().then(blogs => {
       dispatch(initializeBlogs(blogs))
@@ -52,7 +39,7 @@ const App = () => {
           <button id="logout-button" onClick={handleLogout}>Log out</button>
           <div>{user.username} logged in</div>
           <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-            <BlogForm createBlog={handleCreateBlog}/>
+            <BlogForm />
           </Togglable>
           <h2>blogs</h2>
           {user && blogs.sort((a,b) => a.likes < b.likes)
@@ -60,8 +47,6 @@ const App = () => {
               <Blog
                 key={blog.id}
                 blog={blog}
-                handleDelete={handleDelete}
-                handleLike={handleLike}
                 username={user.username}
               />
             )}

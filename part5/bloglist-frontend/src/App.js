@@ -7,10 +7,9 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import AlertMessage from './components/AlertMessage'
 import Togglable  from './components/Togglable'
-import { addBlog, initializeBlogs } from './reducers/blogsReducer'
+import { addBlog, deleteBlog, initializeBlogs, likeBlog } from './reducers/blogsReducer'
 
 const App = () => {
-  const [oldBlogs, setBlogs] = useState([])
   const [user, setUser] = useState()
   const blogs = useSelector(state => state.blogs)
 
@@ -34,28 +33,11 @@ const App = () => {
   }
 
   const handleLike = async (blog) => {
-    try {
-      const liked = await blogService.like(blog)
-      const blogIndex = blogs.findIndex(b => b.id === blog.id)
-      const newBlogArray = [...blogs]
-      newBlogArray[blogIndex] = liked
-      setBlogs(newBlogArray)
-    } catch (err) {
-      console.log(err)
-      handleSetAlertMessage('something went wrong while trying to Like this blog!', true)
-    }
+    dispatch(likeBlog(blog))
   }
 
   const handleDelete = async (blog) => {
-    try {
-      const deletedBlog = await blogService.deleteBlog(blog)
-      const fileteredBlogs = blogs.filter(blog => blog.id !== deletedBlog.id)
-      setBlogs(fileteredBlogs)
-      handleSetAlertMessage(`blog: ${blog.title} has been removed`)
-    } catch (err) {
-      console.log(err)
-      handleSetAlertMessage('something went wrong while deleting this blog...', true)
-    }
+    dispatch(deleteBlog(blog))
   }
 
   const handleSetAlertMessage = (message, isError) => {
@@ -89,13 +71,15 @@ const App = () => {
           </Togglable>
           <h2>blogs</h2>
           {blogs.sort((a,b) => a.likes < b.likes)
-            .map(blog => <Blog
-              key={blog.id}
-              blog={blog}
-              handleDelete={handleDelete}
-              handleLike={handleLike}
-              username={user && user.username}
-            />)}
+            .map(blog =>
+              <Blog
+                key={blog.id}
+                blog={blog}
+                handleDelete={handleDelete}
+                handleLike={handleLike}
+                username={user && user.username}
+              />
+            )}
         </>
       ) : <LoginForm handleLogin={handleLogin} handleSetAlertMessage={handleSetAlertMessage}/>}
     </div>

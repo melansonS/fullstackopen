@@ -1,8 +1,5 @@
-import axios from 'axios'
+import blogService from '../services/blogs'
 import { displayNotification } from './notificationReducer'
-
-const baseUrl = 'http://localhost:3005/api/blogs'
-const token = window.localStorage.getItem('user') ? `bearer ${JSON.parse(window.localStorage.getItem('user')).token}` : null
 
 const blogsReducer = (state = [], action) => {
   switch (action.type) {
@@ -10,6 +7,10 @@ const blogsReducer = (state = [], action) => {
     return action.data
   case 'ADD_BLOG':
     return state.concat(action.blog)
+  case 'LIKE_BLOG':
+    return state.map(blog => blog.id === action.blog.id ? action.blog : blog)
+  case 'DELETE_BLOG':
+    return state.filter(blog => blog.id !== action.blog.id)
   default:
     return state
   }
@@ -25,17 +26,46 @@ export const initializeBlogs = (data) => {
 export const addBlog = (blog) => {
   return async dispatch => {
     try {
-
-      const response = await axios.post(baseUrl, blog, { headers: { Authorization: token } })
+      const newBlog = await blogService.create(blog)
       dispatch({
         type:'ADD_BLOG',
-        blog: response.data
+        blog: newBlog
       })
       dispatch(displayNotification(`a new blog ${blog.title} by ${blog.author} added!`))
 
     } catch (error) {
       console.log(error)
       dispatch(displayNotification('unable to create blog post...', true))
+    }
+  }
+}
+
+export const likeBlog = (blog) => {
+  return async dispatch => {
+    try {
+      const likedBlog = await blogService.like(blog)
+      dispatch({
+        type:'LIKE_BLOG',
+        blog: likedBlog
+      })
+    } catch (err) {
+      console.log(err)
+      dispatch(displayNotification('unable to like this blog post...', true))
+    }
+  }
+}
+
+export const deleteBlog = (blog) => {
+  return async dispatch => {
+    try {
+      const deletedBlog = await blogService.deleteBlog(blog)
+      dispatch({
+        type:'DELETE_BLOG',
+        blog: deletedBlog
+      })
+    } catch (err) {
+      console.log(err)
+      dispatch(displayNotification('unable to like this blog post...', true))
     }
   }
 }

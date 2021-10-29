@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
 import {useMutation} from '@apollo/client'
 import {ALL_AUTHORS, EDIT_AUTHOR} from '../queries'
+import Select from 'react-select'
 
-const EditAuthorsBirth = () => {
-  const [name, setName] = useState("")
+const EditAuthorsBirth = ({authors}) => {
+  const [name, setName] = useState({value: "", label:""})
   const [year, setYear] = useState("")
 
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
@@ -13,7 +14,7 @@ const EditAuthorsBirth = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    editAuthor({variables: {name, setBornTo: Number(year)}})
+    editAuthor({variables: {name: name.value, setBornTo: Number(year)}})
     setName("")
     setYear("")
   }
@@ -25,11 +26,11 @@ const EditAuthorsBirth = () => {
     <form onSubmit={handleSubmit}>
       <div>
         name:
-        <input type="text" value={name} onChange={e => setName(e.target.value)}></input>
+        <Select value={name} onChange={setName} options={authors.map(a => ({value:a.name, label: a.name}))}></Select>
       </div>
       <div>
         year:
-        <input type="text" value={year} onChange={e => setYear(e.target.value)}></input>
+        <input type="text" value={year} required onChange={e => setYear(e.target.value)}></input>
       </div>
       <input type="submit" value="update author"></input>
     </form>
